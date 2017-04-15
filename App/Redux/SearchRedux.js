@@ -5,23 +5,16 @@ import Immutable from 'seamless-immutable'
 import { filter } from 'ramda'
 import { startsWith } from 'ramdasauce'
 
-const LIST_DATA = ['sausage', 'blubber', 'pencil', 'cloud', 'moon', 'water', 'computer', 'school',
-  'network', 'hammer', 'walking', 'violently', 'mediocre', 'literature', 'chair', 'two', 'window',
-  'cords', 'musical', 'zebra', 'xylophone', 'penguin', 'home', 'dog', 'final', 'ink', 'teacher', 'fun',
-  'website', 'banana', 'uncle', 'softly', 'mega', 'ten', 'awesome', 'attatch', 'blue', 'internet', 'bottle',
-  'tight', 'zone', 'tomato', 'prison', 'hydro', 'cleaning', 'telivision', 'send', 'frog', 'cup', 'book',
-  'zooming', 'falling', 'evily', 'gamer', 'lid', 'juice', 'moniter', 'captain', 'bonding', 'loudly', 'thudding',
-  'guitar', 'shaving', 'hair', 'soccer', 'water', 'racket', 'table', 'late', 'media', 'desktop', 'flipper',
-  'club', 'flying', 'smooth', 'monster', 'purple', 'guardian', 'bold', 'hyperlink', 'presentation', 'world', 'national',
-  'comment', 'element', 'magic', 'lion', 'sand', 'crust', 'toast', 'jam', 'hunter', 'forest', 'foraging',
-  'silently', 'tawesomated', 'joshing', 'pong', 'RANDOM', 'WORD'
-]
+
+const url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients';
+const apiKey = 'B9MsKcC5LWmsh10MGfZQbKMe6hXzp158WJyjsnmrXFc3f4FnKz';
 
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  search: ['searchTerm'],
-  cancelSearch: null
+  search: ['dispatch', 'searchTerm'],
+  cancelSearch: null,
+  receiveRecipes: ['recipes'],
 })
 
 export const TemperatureTypes = Types
@@ -32,14 +25,45 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   searchTerm: '',
   searching: false,
-  results: LIST_DATA
+  recipes: []
 })
 
 /* ------------- Reducers ------------- */
 
-export const performSearch = (state: Object, { searchTerm }: Object) => {
-  const results = filter(startsWith(searchTerm), LIST_DATA)
-  return state.merge({ searching: true, searchTerm, results })
+export const performSearch = (state: Object, {dispatch, searchTerm}: Object) => {
+  dispatch(() => {
+    var xhr = new XMLHttpRequest();
+    var params = {
+      fillIngredients: false,
+      ingredients: searchTerm,
+      limitLicense: false,
+      ranking: 1,
+      number: 6,
+    };
+
+    xhr.open('GET', url+'?'+Object.keys(params)
+        .map(key => key + '=' + params[key])
+        .join('&'), true);
+    xhr.setRequestHeader('X-Mashape-Key', apiKey);
+    xhr.setRequestHeader('Accept', 'application/JSON');
+    xhr.send(params);
+
+    return xhr.onreadystatechange = () => {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        dispatch({
+          type: Types.RECEIVE_RECIPES,
+          recipes: xhr.responseText,
+        });
+      }
+    }
+  });
+
+  return state.merge({ searching: true, searchTerm, recipes: [] });
+}
+
+const receiveRecipes = (state: Object, { recipes }: Object) => {
+  // use the id from the result when user actually taps on the image
+  return state.merge({ searching: false, recipes: JSON.parse(recipes) });
 }
 
 export const cancelSearch = (state: Object) => INITIAL_STATE
@@ -48,5 +72,6 @@ export const cancelSearch = (state: Object) => INITIAL_STATE
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.SEARCH]: performSearch,
-  [Types.CANCEL_SEARCH]: cancelSearch
+  [Types.CANCEL_SEARCH]: cancelSearch,
+  [Types.RECEIVE_RECIPES]: receiveRecipes,
 })
