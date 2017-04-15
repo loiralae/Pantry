@@ -6,6 +6,7 @@ import createSagaMiddleware from 'redux-saga'
 import R from 'ramda'
 import RehydrationServices from '../Services/RehydrationServices'
 import ReduxPersist from '../Config/ReduxPersist'
+import thunk from 'redux-thunk'
 
 // creates the store
 export default (rootReducer, rootSaga) => {
@@ -33,6 +34,8 @@ export default (rootReducer, rootSaga) => {
     })
     middleware.push(logger)
   }
+
+  middleware.push(thunk)
 
   /* ------------- Assemble Middleware ------------- */
 
