@@ -19,9 +19,9 @@ export default StyleSheet.create({
     fontFamily: Fonts.type.base,
     fontSize: Fonts.size.regular,
     fontWeight: 'bold',
-    color: Colors.steel
+    color: Colors.snow
   },
   icon: {
-    color: Colors.steel
+    color: Colors.snow
   }
 })
