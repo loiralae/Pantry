@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { connect } from 'react-redux'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
+import { IngredientsView } from './IngredientsView'
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +15,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class TabViewExample extends Component {
+class RecipeView extends Component {
   state = {
     index: 0,
     routes: [
@@ -21,6 +23,10 @@ export default class TabViewExample extends Component {
       { key: '2', title: 'Recipe' },
     ],
   };
+
+  componentWillReceiveProps(props) {
+      console.log('new props', props.currentRecipe);
+  }
 
   _handleChangeTab = (index) => {
     this.setState({ index });
@@ -54,3 +60,16 @@ export default class TabViewExample extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    currentRecipe: state.search.currentRecipe,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecipeView)
