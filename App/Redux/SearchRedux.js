@@ -14,6 +14,7 @@ const { Types, Creators } = createActions({
   cancelSearch: null,
   receiveRecipes: ['recipes'],
   receiveRecipeInfo: ['data'],
+  getRecipe: ['dispatch', 'id'],
 })
 
 export const TemperatureTypes = Types
@@ -72,11 +73,10 @@ export const getRecipeById = (state: Object, {dispatch, id}: Object) => {
   dispatch(() => {
     var xhr = new XMLHttpRequest();
     var params = {
-      id,
       includeNutrition: false,
     };
 
-    xhr.open('GET', 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/getRecipeInformation?'+Object.keys(params)
+    xhr.open('GET', 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/'+id+'/information?'+Object.keys(params)
         .map(key => key + '=' + params[key])
         .join('&'), true);
     xhr.setRequestHeader('X-Mashape-Key', apiKey);
@@ -86,8 +86,8 @@ export const getRecipeById = (state: Object, {dispatch, id}: Object) => {
     return xhr.onreadystatechange = () => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         dispatch({
-          type: Types.receiveRecipeInfo,
-          recipes: xhr.responseText,
+          type: Types.RECEIVE_RECIPE_INFO,
+          data: xhr.responseText,
         });
       }
     }
@@ -97,7 +97,6 @@ export const getRecipeById = (state: Object, {dispatch, id}: Object) => {
 
 const receiveRecipeInfo = (state: Object, { data }: Object) => {
   // use the id from the result when user actually taps on the image
-  console.log('cindy in receiveRecipeInfo', data);
   return state.merge({ currentRecipe: JSON.parse(data) });
 }
 
@@ -108,4 +107,5 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.CANCEL_SEARCH]: cancelSearch,
   [Types.RECEIVE_RECIPES]: receiveRecipes,
   [Types.RECEIVE_RECIPE_INFO]: receiveRecipeInfo,
+  [Types.GET_RECIPE]: getRecipeById,
 })
