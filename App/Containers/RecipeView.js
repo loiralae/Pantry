@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
-import { IngredientsView } from './IngredientsView'
+import IngredientsView from './IngredientsView'
 
 const styles = StyleSheet.create({
   container: {
