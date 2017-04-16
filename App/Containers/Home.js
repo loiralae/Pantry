@@ -30,8 +30,12 @@ class Home extends React.Component {
   }
 
   onSearch = (searchTerm) => {
-    console.log('searchTerm', searchTerm);
     this.props.performSearch(searchTerm);
+  }
+
+  onSearchRecipeById(id) {
+    this.props.getRecipeById(id);
+    NavigationActions.recipeView();
   }
 
   render () {
@@ -40,7 +44,7 @@ class Home extends React.Component {
         <View style={styles.searchBar}>
           <SearchBar onSearch={this.onSearch} onCancel={this.cancelSearch} />
         </View>
-        <RecipeListContainer />
+        <RecipeListContainer onClick={(id) => this.onSearchRecipeById(id)} />
         <RoundedButton onPress={NavigationActions.recipeView}>
           Recipe View
         </RoundedButton>
@@ -59,7 +63,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     performSearch: (searchTerm) => dispatch(SearchActions.search(dispatch, searchTerm)),
-    cancelSearch: () => dispatch(SearchActions.cancelSearch())
+    cancelSearch: () => dispatch(SearchActions.cancelSearch()),
+    getRecipeById: (id) => dispatch(SearchActions.getRecipe(dispatch, id)),
   }
 }
 

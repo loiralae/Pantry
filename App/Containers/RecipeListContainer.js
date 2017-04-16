@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import { View, Text, ListView, Image } from 'react-native'
+import { View, Text, ListView, Image, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
 
 import AlertMessage from '../Components/AlertMessage'
@@ -22,15 +22,15 @@ class RecipeListContainer extends React.Component {
     this.state = {
       dataSource: ds.cloneWithRows([])
     }
+    this.renderRow = this.renderRow.bind(this);
   }
 
   renderRow (rowData) {
-    console.log('rowData', rowData);
     return (
-      <View style={styles.row}>
+      <TouchableOpacity style={styles.row} onPress={() => this.props.onClick(rowData.id)}>
         <Image source={{uri: rowData.image}} style={{width: 100, height: 100}} resizeMode='cover'/>
         <Text style={styles.boldLabel}>{rowData.title}</Text>
-      </View>
+      </TouchableOpacity>
     )
   }
 
