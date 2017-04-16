@@ -21,6 +21,8 @@ import I18n from 'react-native-i18n'
 import SearchBar from '../Components/SearchBar'
 import SearchActions from '../Redux/SearchRedux'
 
+import RoundedButton from '../Components/RoundedButton'
+
 class Home extends React.Component {
 
   cancelSearch = () => {
@@ -39,6 +41,9 @@ class Home extends React.Component {
           <SearchBar onSearch={this.onSearch} onCancel={this.cancelSearch} />
         </View>
         <RecipeListContainer />
+        <RoundedButton onPress={NavigationActions.recipeView}>
+          Recipe View
+        </RoundedButton>
       </View>
     )
   }
