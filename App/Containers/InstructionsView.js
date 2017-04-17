@@ -91,6 +91,11 @@ export default class InstructionsView extends React.Component {
             dataObjects.push(step.step)
         })
       })
+
+      dataObjects = dataObjects.filter((str) => {
+          return str.trim() != ""
+      })
+
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(dataObjects)
       })
