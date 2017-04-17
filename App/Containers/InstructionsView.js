@@ -10,7 +10,7 @@ import AlertMessage from '../Components/AlertMessage'
 // Styles
 import styles from './Styles/ListviewExampleStyle'
 
-export default class IngredientsView extends React.Component {
+export default class InstructionsView extends React.Component {
   state: {
     dataSource: Object
   }
@@ -25,8 +25,10 @@ export default class IngredientsView extends React.Component {
 
     var dataObjects = []
 
-    if (this.props.currentRecipe && this.props.currentRecipe.extendedIngredients) {
-      dataObjects = this.props.currentRecipe.extendedIngredients
+    if (this.props.currentRecipe && this.props.currentRecipe.analyzedInstructions) {
+      this.props.currentRecipe.analyzedInstructions.map((instruction) => {
+        dataObjects.concat(instruction.steps)
+      })
     }
 
     /* ***********************************************************
@@ -35,7 +37,7 @@ export default class IngredientsView extends React.Component {
     * Make this function fast!  Perhaps something like:
     *   (r1, r2) => r1.id !== r2.id}
     *************************************************************/
-    const rowHasChanged = (r1, r2) => r1.id !== r2.id
+    const rowHasChanged = (r1, r2) => r1 !== r2
 
     // DataSource configured
     const ds = new ListView.DataSource({rowHasChanged})
@@ -57,7 +59,7 @@ export default class IngredientsView extends React.Component {
   renderRow (rowData) {
     return (
         <View style={styles.row}>
-          <Text style={styles.boldLabel}>{rowData.originalString}</Text>
+          <Text style={styles.boldLabel}>{rowData}</Text>
         </View>
     )
   }
@@ -81,9 +83,16 @@ export default class IngredientsView extends React.Component {
   *************************************************************/
 
   componentWillReceiveProps (newProps) {
-    if (newProps.currentRecipe && newProps.currentRecipe.extendedIngredients) {
+    var dataObjects = []
+    if (newProps.currentRecipe && newProps.currentRecipe.analyzedInstructions) {
+      newProps.currentRecipe.analyzedInstructions.map((instruction) => {
+        dataObjects.push(instruction.name)
+        instruction.steps.map((step) => {
+            dataObjects.push(step.step)
+        })
+      })
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(newProps.currentRecipe.extendedIngredients)
+        dataSource: this.state.dataSource.cloneWithRows(dataObjects)
       })
     }
   }

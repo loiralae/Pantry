@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
 import IngredientsView from './IngredientsView'
+import InstructionsView from './InstructionsView'
 
 const styles = StyleSheet.create({
   container: {
@@ -25,7 +26,7 @@ class RecipeView extends Component {
   };
 
   componentWillReceiveProps(props) {
-      console.log('new props', props.currentRecipe);
+      this.setState({currentRecipe: props.currentRecipe})
   }
 
   _handleChangeTab = (index) => {
@@ -39,9 +40,9 @@ class RecipeView extends Component {
   _renderScene = ({ route }) => {
     switch (route.key) {
     case '1':
-      return <View style={[ styles.page, { backgroundColor: '#ff4081' } ]} />;
+      return <IngredientsView currentRecipe={this.props.currentRecipe} />;
     case '2':
-      return <View style={[ styles.page, { backgroundColor: '#673ab7' } ]} />;
+      return <InstructionsView currentRecipe={this.props.currentRecipe} />;
     default:
       return null;
     }
